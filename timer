@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+
+"""
+Timer - lance une alarme après un temps donné 
+By TheGreat-Chain
+"""
+from os import system
+import pygame
+import time
+import sys
+
+# Verification si commande correcte :
+nbArguments = len(sys.argv)
+options = ['-s', '-m', '-h', '-d'] #secondes, minutes, heures
+waitingTime = None
+timeUnit = "minutes"
+usage = "\nUsage : timer [option] [time] \nOPTIONS : \n -s : input time in seconds \n -m : input time in minutes \n -h input time in hours \n\nTIME : \n Time to wait before the alarm rings. In minutes by default\n"
+
+# Nombre d'arguments 
+if(nbArguments not in range(2,4)): 
+    print(usage)
+    exit()
+
+# Avec option (2 arguments) :
+if(sys.argv[1] in options):
+    if(sys.argv[2]): 
+        try:
+            waitingTime = int(sys.argv[2])
+        except ValueError :
+            print("\nYou have to enter an number for the waiting time.\n")
+            exit()
+
+        if(sys.argv[1] == '-s'): #secondes
+            waitingTime = int(sys.argv[2]) 
+            timeUnit = "seconds"
+
+        elif(sys.argv[1] == '-m'): #minutes
+            waitingTime = int(sys.argv[2])*60
+
+        elif(sys.argv[1] == '-h'): #hours
+            waitingTime = int(sys.argv[2])*60*60
+            timeUnit = "hours"
+
+# Sans option (1 argument) : 
+elif(sys.argv[1]): 
+    try:
+        waitingTime = int(sys.argv[1])
+    except ValueError :
+        print("\nYou have to enter an number for the waiting time.\n")
+        exit()
+        
+    waitingTime = int(sys.argv[1])*60
+
+else:
+    print(usage)
+    exit()
+
+# Fichier :
+fichier = "./alarms/alarme.wav"
+pygame.mixer.init()
+alarme = pygame.mixer.Sound(fichier)
+
+# Attente puis alarme
+print("The alarm will ring in : {time} seconds.".format(time=waitingTime))
+time.sleep(waitingTime)
+alarme.play()
+print("Time's up !")
+time.sleep(5)
+exit()
