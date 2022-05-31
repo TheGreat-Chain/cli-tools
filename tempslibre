@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+
+"""
+Addicteur - Me dit une activité à faire pendant une certaine durée de temps
+By TheGreat-Chain
+"""
+
+###### IMPORTS ###################################################
+
+from ast import expr_context
+from multiprocessing.sharedctypes import Value
+import sys
+import random
+
+from numpy import void
+
+##### CONSTANTES ##################################################
+FICHIER = '/home/cresus/Scripts/usable/tempslibre.txt'
+DUREES = [15, 30, 45, 60]
+
+###### FONCTIONS ###################################################
+
+def display(array: list) -> void:
+    '''
+    Prints every element of an array with its index.
+    '''
+    for i in range(len(array)):
+        print(str(i) + ". : " + array[i])
+
+def add(activity: str) -> void:
+    '''
+    Ajouter une activité dans le fichier des activités
+    '''
+    with open(FICHIER, 'a') as f:
+        f.write(activity + "\n")
+
+def remove(index: int) -> void:
+    '''
+    Retirer l'activité d'indice @index du fichier des activités.
+    '''
+    try:
+        index += 1
+        ptr = 1
+        with open(FICHIER, 'w') as f:
+            for line in ACTIVITES:
+                if ptr != index:
+                    f.write(line)
+                ptr += 1
+    except:
+        print("Erreur.")
+
+
+
+
+###### PROGRAMME ###################################################
+
+ACTIVITES = open(FICHIER).readlines()
+
+# Verification si commande correcte :
+nbArguments = len(sys.argv)
+options = ['-add', '-remove', '-list', '-h']
+usage = "\nUsage : tempslibre [option] [activite] \nOPTIONS : \n -add : ajouter l'activité spécifiée \n -remove : retirer une activité. Les lister si besoin. \n -list : lister les activités. \n -h : Affiche cette aide.\n"
+
+# Nombre d'arguments 
+if(nbArguments not in range(0, 4)): 
+    print(usage)
+    exit()
+
+# Avec option (2 arguments) :
+try:
+    if(sys.argv[1] in options):
+        if(sys.argv[1] == '-help' or sys.argv[1] == '--h'): 
+                print(usage)
+                exit()
+
+        elif(sys.argv[1] == '-list'):
+            display(ACTIVITES)
+            exit()
+
+        elif(sys.argv[2]): 
+            if(sys.argv[1] == '-add'): 
+                add(sys.argv[2])
+                ACTIVITES = open(FICHIER).readlines()
+                display(ACTIVITES)
+                exit()
+
+            elif(sys.argv[1] == '-remove'): 
+                try:
+                    ligne = int(sys.argv[2])
+                    remove(ligne)
+                    ACTIVITES = open(FICHIER).readlines()
+                    display(ACTIVITES)
+
+                except ValueError:
+                    print("L'option -remove s'accompagne du numéro de la ligne à supprimer. -list pour afficher les lignes.")
+                exit()
+
+        else:
+            print(usage)
+            
+except IndexError:
+    activite = ACTIVITES[random.randrange(len(ACTIVITES))]
+    duree = str(DUREES[random.randrange(len(DUREES))])
+    print("Activité : " + activite + "\nDurée : " + duree + "min.")
+
+
+
